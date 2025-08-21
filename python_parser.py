@@ -10,18 +10,17 @@ class PythonParser:
         self.visited = set()
 
     def get_links(self, url):
-        links = set() # change list to set
+        links = set()
         try:
             html = requests.get(url, timeout=5).text
             soup = BeautifulSoup(html, "html.parser")
             for a in soup.find_all("a", href=True):
                 full_url = urljoin(url, a["href"])
-                links.add(full_url) # not duplicated
+                links.add(full_url)
         except Exception as e:
             print("Error:", e)
         return links
 
-    # the output number is the least
     def python_parser_for_for_for(self):
         for url1 in self.get_links(self.start_url):
             if url1 in self.visited:
@@ -37,7 +36,6 @@ class PythonParser:
                     self.visited.add(url3)
                     print("level 3:", url3)
 
-    #order is different
     def python_parser_recursion(self, url=None, depth=1):
         if url is None:
             url = self.start_url
@@ -69,7 +67,7 @@ if __name__ == "__main__":
     parser = PythonParser("https://docs.clustervision.com", max_depth=3)
     # each output is different 
 
-    parser.python_parser_for_for_for() 
+    # parser.python_parser_for_for_for() 
     # parser.python_parser_recursion()
     # parser.python_parser_bfs()
 
