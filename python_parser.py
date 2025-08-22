@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse,urldefrag
 from collections import deque
 
 class PythonParser:
@@ -16,11 +16,14 @@ class PythonParser:
     def get_links(self, url):
         links = set()
         try:
-            html = requests.get(url, timeout=5).text
+            html = requests.get(url, timeout=10).text
             soup = BeautifulSoup(html, "html.parser")
             for a in soup.find_all("a", href=True):
                 full_url = urljoin(url, a["href"])
-                if not self.same_domain(full_url):
+                # urldefrag(urljoin(url, a["href"]))not works for bfs, because it rm all 
+                if '/#' in full_url:
+                    full_url = full_url.rsplit("/#", 1)[0]
+                if self.same_domain(full_url):
                     links.add(full_url)
         except Exception as e:
             print("Error:", e)
@@ -31,10 +34,13 @@ class PythonParser:
             if url1 in self.visited:
                 continue
             self.visited.add(url1)
+            # print("level 1:", url1)
+
             for url2 in self.get_links(url1):
                 if url2 in self.visited:
                     continue
                 self.visited.add(url2)
+                # print("level 2:", url2)
                 for url3 in self.get_links(url2):
                     if url3 in self.visited:
                         continue
