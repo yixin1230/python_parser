@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from collections import deque
 
 class PythonParser:
@@ -8,6 +8,7 @@ class PythonParser:
         self.start_url = start_url
         self.max_depth = max_depth
         self.visited = set()
+        self.start_host = urlparse(start_url).netloc
 
     def get_links(self, url):
         links = set()
@@ -16,7 +17,8 @@ class PythonParser:
             soup = BeautifulSoup(html, "html.parser")
             for a in soup.find_all("a", href=True):
                 full_url = urljoin(url, a["href"])
-                links.add(full_url)
+                if urlparse(full_url).netloc == self.start_host:
+                    links.add(full_url)
         except Exception as e:
             print("Error:", e)
         return links
@@ -66,8 +68,7 @@ class PythonParser:
 if __name__ == "__main__":
     parser = PythonParser("https://docs.clustervision.com", max_depth=3)
     # each output is different 
-
-    # parser.python_parser_for_for_for() 
+    parser.python_parser_for_for_for() 
     # parser.python_parser_recursion()
     # parser.python_parser_bfs()
 
