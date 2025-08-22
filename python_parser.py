@@ -10,6 +10,9 @@ class PythonParser:
         self.visited = set()
         self.start_host = urlparse(start_url).netloc
 
+    def same_domain(self, url):
+        return urlparse(url).netloc == self.start_host
+    
     def get_links(self, url):
         links = set()
         try:
@@ -17,7 +20,7 @@ class PythonParser:
             soup = BeautifulSoup(html, "html.parser")
             for a in soup.find_all("a", href=True):
                 full_url = urljoin(url, a["href"])
-                if urlparse(full_url).netloc == self.start_host:
+                if not self.same_domain(full_url):
                     links.add(full_url)
         except Exception as e:
             print("Error:", e)
